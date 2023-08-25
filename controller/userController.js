@@ -2,7 +2,6 @@
 const bcrypt = require('bcrypt');
 const User = require('../model/userModel')
 const jwt = require('jsonwebtoken')
-const multer = require('multer')
 
 
 //-----user registration -----//
@@ -80,7 +79,8 @@ const userLogin = async(req,res) => {
         })
 
         res.send({
-            message:"success"
+            message:"success",
+            user,jwtToken: token
         })
         
     } catch (error) {
@@ -107,7 +107,7 @@ const userAuthorise = async(req,res) => {
       
       const user = await User.findOne({_id:claim._id})
       
-      const { password,...data } = await user.toJSON();
+      const { password,...data } =  user.toJSON();
       res.send(data)
 
     } catch (error) {

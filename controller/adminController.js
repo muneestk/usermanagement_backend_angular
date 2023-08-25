@@ -32,7 +32,10 @@ const adminRegister = async(req,res) => {
          //JWT token
  
          const {_id} = await admin.save()
-         const token = jwt.sign({_id:_id},"secretAdmin");
+        //  const token = jwt.sign({_id:_id},"secretAdmin");
+
+        const token = jwt.sign({ _id: _id, role: 'admin' }, "secretAdmin");
+
  
          res.cookie("jwt",token,{
              httpOnly:true,
@@ -149,7 +152,6 @@ const deleteUser = async (req, res) => {
             return res.status(400).send({ message: 'Something went wrong!' });
         }
 
-        // Respond with a success message and the deleted user data
         res.status(200).send({
             message: 'User successfully deleted',
             deletedUser: userDelete
@@ -168,7 +170,6 @@ const deleteUser = async (req, res) => {
 
 const editDetails = async(req,res) => {
     try {
-        console.log(req.params.id,'uder id');
         const data = await User.findById(req.params.id)
         res.status(200).json(data)
     } catch (error) {
@@ -184,8 +185,6 @@ const editDetails = async(req,res) => {
 
 const updateUser = async(req,res) => {
     try {
-        console.log(req.body.mobileNumber);
-        console.log(req.body.emailChange);
         const userData = await User.findByIdAndUpdate(req.body.id,{
             $set:{
                 email:req.body.emailChange,
@@ -212,11 +211,14 @@ const createUser = async(req,res) => {
         let password=await bcrypt.hash(req.body.password,10)
         let name=req.body.name
 
+        console.log(req.body.mobileNumber);
+
         const user = User({
             name:name,
             email:email,
+            mobile:req.body.mobileNumber,
             password:password
-        })
+        })  
 
         await user.save()
 
